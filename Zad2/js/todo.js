@@ -8,40 +8,39 @@
 
 //Event handling, uder interaction is what starts the code execution.
 
-var taskInput=document.getElementById("new-task");//Add a new task.
-var addButton=document.getElementsByTagName("button")[0];//first button
-var incompleteTaskHolder=document.getElementById("incomplete-tasks");//ul of #incomplete-tasks
-var completedTasksHolder=document.getElementById("completed-tasks");//completed-tasks
+const taskInput = document.getElementById("new-task");//Add a new task.
+const addButton = document.getElementsByTagName("button")[0];//first button
+const incompleteTaskHolder = document.getElementById("incomplete-tasks");//ul of #incomplete-tasks
+const completedTasksHolder = document.getElementById("completed-tasks");//completed-tasks
 
 
 //New task list item
-var createNewTaskElement=function(taskString){
+const createNewTaskElement = function (taskString) {
 
-    var listItem=document.createElement("li");
+    const listItem = document.createElement("li");
 
     //input (checkbox)
-    var checkBox=document.createElement("input");//checkbx
+    const checkBox = document.createElement("input");//checkbx
     //label
-    var label=document.createElement("label");//label
+    const label = document.createElement("label");//label
     //input (text)
-    var editInput=document.createElement("input");//text
+    const editInput = document.createElement("input");//text
     //button.edit
-    var editButton=document.createElement("button");//edit button
+    const editButton = document.createElement("button");//edit button
 
     //button.delete
-    var deleteButton=document.createElement("button");//delete button
+    const deleteButton = document.createElement("button");//delete button
 
-    label.innerText=taskString;
+    label.innerText = taskString;
 
     //Each elements, needs appending
-    checkBox.type="checkbox";
-    editInput.type="text";
+    checkBox.type = "checkbox";
+    editInput.type = "text";
 
-    editButton.innerText="Edit";//innerText encodes special characters, HTML does not.
-    editButton.className="edit";
-    deleteButton.innerText="Delete";
-    deleteButton.className="delete";
-
+    editButton.innerText = "Edit";//innerText encodes special characters, HTML does not.
+    editButton.className = "edit";
+    deleteButton.innerText = "Delete";
+    deleteButton.className = "delete";
 
 
     //and appending.
@@ -51,15 +50,30 @@ var createNewTaskElement=function(taskString){
     listItem.appendChild(editButton);
     listItem.appendChild(deleteButton);
     return listItem;
-}
+};
 
 
+const bindTaskEvents=function(taskListItem, checkBoxEventHandler){
+    console.log("bind list item events");
+//select ListItems children
+    const checkBox = taskListItem.querySelector("input[type=checkbox]");
+    const editButton = taskListItem.querySelector("button.edit");
+    const deleteButton = taskListItem.querySelector("button.delete");
+
+
+    //Bind editTask to edit button.
+    editButton.onclick=editTask;
+    //Bind deleteTask to delete button.
+    deleteButton.onclick=deleteTask;
+    //Bind taskCompleted to checkBoxEventHandler.
+    checkBox.onchange=checkBoxEventHandler;
+};
 const taskIncomplete=function(){
     console.log("Incomplete Task...");
 //Mark task as incomplete.
     //When the checkbox is unchecked
     //Append the task list item to the #incomplete-tasks.
-    var listItem=this.parentNode;
+    const listItem = this.parentNode;
     incompleteTaskHolder.appendChild(listItem);
     bindTaskEvents(listItem,taskCompleted);
 };
@@ -68,7 +82,7 @@ const taskCompleted=function(){
     console.log("Complete Task...");
 
     //Append the task list item to the #completed-tasks
-    var listItem=this.parentNode;
+    const listItem = this.parentNode;
     completedTasksHolder.appendChild(listItem);
     bindTaskEvents(listItem, taskIncomplete);
 
@@ -76,7 +90,7 @@ const taskCompleted=function(){
 const addTask = function () {
     console.log("Add Task...");
     //Create a new list item with the text from the #new-task:
-    var listItem = createNewTaskElement(taskInput.value);
+    const listItem = createNewTaskElement(taskInput.value);
 
     //Append listItem to incompleteTaskHolder
     incompleteTaskHolder.appendChild(listItem);
@@ -93,11 +107,11 @@ const editTask = function () {
     console.log("Change 'edit' to 'save'");
 
 
-    var listItem = this.parentNode;
+    const listItem = this.parentNode;
 
-    var editInput = listItem.querySelector('input[type=text]');
-    var label = listItem.querySelector("label");
-    var containsClass = listItem.classList.contains("editMode");
+    const editInput = listItem.querySelector('input[type=text]');
+    const label = listItem.querySelector("label");
+    const containsClass = listItem.classList.contains("editMode");
     //If class of the parent is .editmode
     if (containsClass) {
 
@@ -131,28 +145,10 @@ const ajaxRequest = function () {
 
 //The glue to hold it all together.
 
-
 //Set the click handler to the addTask function.
 addButton.onclick=addTask;
 addButton.addEventListener("click",addTask);
 addButton.addEventListener("click",ajaxRequest);
-
-
-var bindTaskEvents=function(taskListItem,checkBoxEventHandler){
-    console.log("bind list item events");
-//select ListItems children
-    const checkBox = taskListItem.querySelector("input[type=checkbox]");
-    const editButton = taskListItem.querySelector("button.edit");
-    const deleteButton = taskListItem.querySelector("button.delete");
-
-
-    //Bind editTask to edit button.
-    editButton.onclick=editTask;
-    //Bind deleteTask to delete button.
-    deleteButton.onclick=deleteTask;
-    //Bind taskCompleted to checkBoxEventHandler.
-    checkBox.onchange=checkBoxEventHandler;
-}
 
 //cycle over incompleteTaskHolder ul list items
 let i;
@@ -162,9 +158,6 @@ for (i = 0; i<incompleteTaskHolder.children.length; i++){
     //bind events to list items chldren(tasksCompleted)
     bindTaskEvents(incompleteTaskHolder.children[i],taskCompleted);
 }
-
-
-
 
 //cycle over completedTasksHolder ul list items
 for (i = 0; i<completedTasksHolder.children.length; i++){
