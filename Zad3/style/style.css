@@ -1,61 +1,49 @@
-body {
-    background-color: white;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 14px;
+*{
+    box-sizing: border-box;
+}
+body{
+    background: #F3F5F6;
+    color: #464646;
+    font-family: Arial;
 }
 
-#controls,
-#overall,
-#puzzlearea {
-    width: 400px;
+
+.container{
+    width: 240px;
+    margin: 150px auto;
+    height: 300px;
 }
 
-#controls {
-    padding-top: 10px;
-    text-align: center;
+
+#game{
+    width: 200px;
+    font-size: 0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    background: #777;
 }
 
-h1 {
-    margin: 10px 0px;
-    text-align: center;
+.block{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    background: #ddd;
+    color: #000;
+    border: 2px solid #777;
+    font-size: 16px;
+    cursor: default;
+}
+.hidden{
+    opacity: 0.2;
 }
 
-/* Used to center the puzzle. */
-#overall {
-    margin-left: auto;
-    margin-right: auto;
-}
+button{
+    margin-top: 20px;
+    padding: 8px 15px;
+    background: #ddd;
+    cursor: pointer;
 
-/* The area that holds the 15 puzzle pieces. */
-#puzzlearea {
-    font-size: 32px;
-    height: 400px;
-    padding: 0px;
-    position: relative;
-}
-
-/* This class should be applied to each of the 15 puzzle pieces. */
-.puzzlepiece {
-    border: 2px solid black;
-    height: 96px;
-    line-height: 96px;
-    position: absolute;
-    text-align: center;
-    vertical-align: middle;
-    width: 96px;
-}
-
-/* This class should be applied to a puzzle piece that can be moved. */
-.movablepiece:hover {
-    border-color: red;
-    color: #006600;
-    text-decoration: underline;
-}
-
-#w3c {
-    text-align: right;
-}
-
-#w3c img {
-    border: none;
 }

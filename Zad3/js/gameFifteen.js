@@ -1,195 +1,168 @@
-/*JavaScript for Fifteen Puzzle
-Extra Feature: End-of_Game Notification */
-"use strict";
-//globally declared variables
-let gamePiece;
-let notify;
-let timer;
-let spaceY;
-let spaceX;
 window.onload = function () {
-    const puzzleArea = document.getElementById('puzzlearea');
-    gamePiece = puzzleArea.getElementsByTagName('div');
-    for (let i = 0; i < gamePiece.length; i++) {
-        gamePiece[i].className = 'puzzlepiece';
-        gamePiece[i].style.left = (i % 4 * 100) + 'px';
-        gamePiece[i].style.top = (i / 4 * 100) + 'px';
-        gamePiece[i].style.backgroundPosition = '-' + gamePiece[i].style.left + ' ' + '-' + gamePiece[i].style.top;
-
-        gamePiece[i].onmouseover = function () {
-            if (checkMove(parseInt(this.innerHTML))) {
-                this.style.border = "3px solid red";
-                this.style.color = "#006600";
-                this.style.textDecoration = "underline";
-                this.style.backgroundImage = "url('https://s-media-cache-ak0.pinimg.com/564x/83/72/12/837212dd8b71f9b5d175ac98f2c7668a.jpg')";
-
-            }
-        };
-        gamePiece[i].onmouseout = function () {
-            this.style.border = "2px solid black";
-            this.style.color = "#000000";
-            this.style.textDecoration = "none";
-        };
-        gamePiece[i].onclick = function () {
-            if (checkMove(parseInt(this.innerHTML))) {
-                swap(this.innerHTML - 1);
-                if (finish()) {
-                    win();
+    document.getElementById('start').onclick = function () {
+        startGame();
+    }
+    const game = document.getElementsByClassName('block');
+    for (let i = 0; i < game.length; i++) {
+        game[i].onclick = function (e) {
+            const row = e.target.getAttribute('data-row'),
+                col = e.target.getAttribute('data-col');
+            const val = e.target.innerHTML;
+            console.log(row);
+            if (row !== 'a') {
+                const top_col = col;
+                let top_row;
+                switch (row) {
+                    case 'b' :
+                        top_row = 'a';
+                        break;
+                    case 'c' :
+                        top_row = 'b';
+                        break;
+                    case 'd' :
+                        top_row = 'c';
+                        break;
                 }
-
+                valReplace(top_col, top_row);
             }
-        };
-    }
-    const shuffle = document.getElementById('shufflebutton');
-    spaceX = '300px';
-    spaceY = '300px';
-    shuffle.onclick = function () {
-        let rand;
-        rand = Math.trunc(Math.random() * 100) % 4;
-        let temp;
-        for (let i = 0; i < 300; i++) {
-            temp = up(spaceX, spaceY);
-            if (temp !== -1) {
-                swap(temp);
+            if (col !== 4) {
+                const right_col = +col + 1;
+                valReplace(right_col, row);
             }
-        }
-        if (rand === 1) {
-            temp = down(spaceX, spaceY);
-            if (temp !== -1) {
-                swap(temp);
+            if (row !== 'd') {
+                const bottom_col = col;
+                let bottom_row;
+                switch (row) {
+                    case 'a' :
+                        bottom_row = 'b';
+                        break;
+                    case 'b' :
+                        bottom_row = 'c';
+                        break;
+                    case 'c' :
+                        bottom_row = 'd';
+                        break;
+                }
+                valReplace(bottom_col, bottom_row);
             }
-        }
-        if (rand === 2) {
-            temp = left(spaceX, spaceY);
-            if (temp !== -1) {
-                swap(temp);
+            if (col !== 1) {
+                const left_col = col - 1;
+                valReplace(left_col, row);
             }
-        }
-        if (rand === 3) {
-            temp = right(spaceX, spaceY);
-            if (temp !== -1) {
-                swap(temp);
+            function valReplace(next_col, next_row) {
+                for (let i = 0; i < game.length; i++) {
+                    if ((game[i].getAttribute('data-col') === next_col) && (game[i].getAttribute('data-row') === next_row)) {
+                        if (game[i].innerHTML === '') {
+                            game[i].innerHTML = val;
+                            e.target.innerHTML = '';
+                            game[i].className = game[i].className.replace('block hidden', 'block');
+                            e.target.className = e.target.className.replace('block', 'block hidden');
+                        }
+                    }
+                }
             }
+            winnerGame();
+        } 
+    }
+    function randomMix(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    let arr = [];
+    let emptyBlock;
+
+    function startGame() {
+        let i;
+        arr = [];
+        const game = document.getElementsByClassName('block');
+        for (i = 0; i < game.length; i++) {
+            const col = game[i].getAttribute('data-col');
+            const row = game[i].getAttribute('data-row');
+            const elem = game[i];
+            if (elem.innerHTML === '') {
+                emptyBlock = elem;
+                if (row !== 'a') {
+                    const top_col = col;
+                    let top_row;
+                    switch (row) {
+                        case 'b':
+                            top_row = 'a';
+                            break;
+                        case 'c':
+                            top_row = 'b';
+                            break;
+                        case 'd':
+                            top_row = 'c';
+                            break;
+                    }
+                    for (i = 0; i < game.length; i++) {
+                        if ((game[i].getAttribute('data-col') === top_col) && (game[i].getAttribute('data-row') === top_row)) {
+                            arr[arr.length] = game[i];
+                        }
+                    }
+                }
+                if (+col !== 4) {
+                    const right_col = +col + 1;
+                    for (i = 0; i < game.length; i++) {
+                        if ((game[i].getAttribute('data-col') === right_col) && (game[i].getAttribute('data-row') === row)) {
+                            arr[arr.length] = game[i];
+                        }
+                    }
+                }
+                if (row !== 'd') {
+                    const bottom_col = col;
+                    let bottom_row;
+                    switch (row) {
+                        case 'a':
+                            bottom_row = 'b';
+                            break;
+                        case 'b':
+                            bottom_row = 'c';
+                            break;
+                        case 'c':
+                            bottom_row = 'd';
+                            break;
+                    }
+                    for (i = 0; i < game.length; i++) {
+                        if ((game[i].getAttribute('data-col') === bottom_col) && (game[i].getAttribute('data-row') === bottom_row)) {
+                            arr[arr.length] = game[i];
+                        }
+                    }
+                }
+                if (+col !== 1) {
+                    const left_col = col - 1;
+                    for (i = 0; i < game.length; i++) {
+                        if ((game[i].getAttribute('data-col') === left_col) && (game[i].getAttribute('data-row') === row)) {
+                            arr[arr.length] = game[i];
+                        }
+                    }
+                }
+            } 
+        } 
+    }
+    let startTime;
+    document.getElementById('start').onclick = function () {
+        startTime = new Date;
+        const levelNumber = document.getElementById('level').value;
+        for (let a = 0; a < levelNumber; a++) {
+            startGame();
+            const randomInt = arr[randomMix(0, arr.length - 1)];
+            emptyBlock.innerHTML = randomInt.innerHTML;
+            randomInt.innerHTML = '';
+            randomInt.className = 'block hidden';
+            emptyBlock.className = 'block';
         }
     }
-}
-
-function checkMove(position) {
-    if (left(spaceX, spaceY) === (position - 1)) {
-        return true;
-    }
-    if (down(spaceX, spaceY) === (position - 1)) {
-        return true;
-    }
-    if (up(spaceX, spaceY) === (position - 1)) {
-        return true;
-    }
-    if (right(spaceX, spaceY) === (position - 1)) {
-        return true;
-    }
-}
-
-function Notify() {
-    notify--;
-    var body = document.getElementsByTagName('body');
-    if (notify === 0) {
-        body[0].style.backgroundImage = "none";
-        alert('Winner! ... Shuffle and Play Again');
-        const para = document.getElementsByClassName('explanation');
-        para[0].style.visibility = "visible";
-        return;
-    } else (notify % 2)
-    {
-
-        body[0].style.backgroundImage = "url('http://assets.pokemon.com/assets/cms2/img/video-games/video-games/pokemon_go/boxart.jpg')";
-
-    }
-    timer = setTimeout(Notify, 200);
-}
-
-function win() {
-    const body = document.getElementsByTagName('body');
-    body[0].style.backgroundImage = "url('http://assets.pokemon.com/assets/cms2/img/video-games/video-games/pokemon_go/boxart.jpg')";
-    notify = 10;
-    timer = setTimeout(Notify, 200);
-    const para = document.getElementsByClassName('explanation');
-    para[0].style.visibility = "hidden";
-}
-
-function finish() {
-    let flag = true;
-    for (let i = 0; i < gamePiece.length; i++) {
-        const top = parseInt(gamePiece[i].style.top);
-        const left = parseInt(gamePiece[i].style.left);
-        if (left !== (i % 4 * 100) || top !== Math.trunc(i / 4) * 100) {
-            flag = false;
-            break;
-        }
-    }
-    return flag;
-}
-
-function left(x, y) {
-    const cordX = parseInt(x);
-    const cordY = parseInt(y);
-    if (cordX > 0) {
-        for (let i = 0; i < gamePiece.length; i++) {
-            if (parseInt(gamePiece[i].style.left) + 100 === cordX && parseInt(gamePiece[i].style.top) === cordY) {
-                return i;
-            }
-        }
-    } else {
-        return -1;
-    }
-}
-
-function right(x, y) {
-    const cordX = parseInt(x);
-    const cordY = parseInt(y);
-    if (cordX < 300) {
-        for (let i = 0; i < gamePiece.length; i++) {
-            if (parseInt(gamePiece[i].style.left) - 100 === cordX && parseInt(gamePiece[i].style.top) === cordY) {
-                return i;
-            }
-        }
-    } else {
-        return -1;
-    }
-}
-
-function up(x, y) {
-    const cordX = parseInt(x);
-    const cordY = parseInt(y);
-    if (cordY > 0) {
-        for (let i = 0; i < gamePiece.length; i++) {
-            if (parseInt(gamePiece[i].style.top) + 100 === cordY && parseInt(gamePiece[i].style.left) === cordX) {
-                return i;
-            }
-        }
-    } else {
-        return -1;
-    }
-}
-
-function down(x, y) {
-    const cordX = parseInt(x);
-    const cordY = parseInt(y);
-    if (cordY < 300) {
-        for (let i = 0; i < gamePiece.length; i++) {
-            if (parseInt(gamePiece[i].style.top) - 100 === cordY && parseInt(gamePiece[i].style.left) === cordX) {
-                return i;
+    function winnerGame() {
+        const game = document.getElementsByClassName('block');
+        let win = true;
+        for (let i = 0; i < game.length - 1; i++) {
+            if ((i + 1) !== +game[i].innerHTML) {
+                win = false;
             }
         }
-    } else {
-        return -1;
+        if (win) {
+            alert('Congratulations, you won! Time: ' + (new Date - startTime) / 1000);
+        }
     }
-}
-
-function swap(position) {
-    let temp = gamePiece[position].style.top;
-    gamePiece[position].style.top = spaceY;
-    spaceY = temp;
-    temp = gamePiece[position].style.left;
-    gamePiece[position].style.left = spaceX;
-    spaceX = temp;
 }
