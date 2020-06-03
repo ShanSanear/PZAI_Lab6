@@ -1,4 +1,3 @@
-/* Basic Style */
 body {
     background: #fff;
     color: #333;
@@ -20,18 +19,14 @@ li, h3 {
     clear:both;
     list-style:none;
 }
-input, button {
-    outline: none;
-}
 button {
     background: none;
-    border: 0px;
     color: #888;
     font-size: 15px;
     width: 60px;
-    margin: 10px 0 0;
     font-family: Lato, sans-serif;
     cursor: pointer;
+    border: 0;
 }
 button:hover {
     color: #333;
@@ -76,7 +71,6 @@ p > button:hover {
     color: #0FC57C;
 }
 
-/* Task list */
 li {
     overflow: hidden;
     padding: 20px 0;
@@ -100,13 +94,11 @@ li > .delete:hover {
     color: #CF2323;
 }
 
-/* Completed */
 #completed-tasks label {
     text-decoration: line-through;
     color: #888;
 }
 
-/* Edit Task */
 ul li input[type=text] {
     display:none;
 }
