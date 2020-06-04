@@ -19,14 +19,18 @@ li, h3 {
     clear:both;
     list-style:none;
 }
+input, button {
+    outline: none;
+}
 button {
     background: none;
+    border: 0;
     color: #888;
     font-size: 15px;
     width: 60px;
+    margin: 10px 0 0;
     font-family: Lato, sans-serif;
     cursor: pointer;
-    border: 0;
 }
 button:hover {
     color: #333;
@@ -58,7 +62,6 @@ input[type="text"]:focus {
     color: #333;
 }
 
-/* New Task */
 label[for='new-task'] {
     display: block;
     margin: 0 0 20px;
@@ -99,6 +102,7 @@ li > .delete:hover {
     color: #888;
 }
 
+/* Edit Task */
 ul li input[type=text] {
     display:none;
 }
